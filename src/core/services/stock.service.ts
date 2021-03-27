@@ -13,7 +13,7 @@ export class StockService {
   seedData(): void {
     console.log('seeding data', 'seeding');
     const stock1: Stock = {
-      name: 'Novo',
+      name: 'Novo Nordisk',
       description: 'Medicinal company',
       currentValue: 1000,
       dateOfCurrentValue: new Date(),
@@ -30,9 +30,23 @@ export class StockService {
       currentValue: 1200,
       dateOfCurrentValue: new Date(),
     };
+    const stock4: Stock = {
+      name: 'Novozymes',
+      description: 'Container company',
+      currentValue: 1300,
+      dateOfCurrentValue: new Date(),
+    };
+    const stock5: Stock = {
+      name: 'Danske Bank',
+      description: 'Container company',
+      currentValue: 1400,
+      dateOfCurrentValue: new Date(),
+    };
     this.createStock(stock1);
     this.createStock(stock2);
     this.createStock(stock3);
+    this.createStock(stock4);
+    this.createStock(stock5);
   }
 
   createStock(stock: Stock): Stock {

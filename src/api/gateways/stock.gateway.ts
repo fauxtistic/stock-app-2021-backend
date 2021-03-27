@@ -27,19 +27,19 @@ export class StockGateway {
   @SubscribeMessage('updateStock')
   handleUpdateStockEvent(@MessageBody() { stock, date }): void {
     const updatedStock = this.stockService.updateStock(stock, date);
-    //this.server.emit('stockUpdated', updatedStock);
-    const newDate = new Date();
+    this.server.emit('stockUpdated', updatedStock);
+    /*const newDate = new Date();
     const stocks = this.stockService.getAllStocks(newDate);
-    this.server.emit('allStocks', stocks);
+    this.server.emit('allStocks', stocks);*/
   }
 
   @SubscribeMessage('deleteStock')
   handleDeleteStockEvent(@MessageBody() stock: Stock): void {
     const deletedStock = this.stockService.deleteStock(stock);
-    //this.server.emit('stockDeleted', deletedStock);
-    const newDate = new Date();
+    this.server.emit('stockDeleted', deletedStock);
+    /*const newDate = new Date();
     const stocks = this.stockService.getAllStocks(newDate);
-    this.server.emit('allStocks', stocks);
+    this.server.emit('allStocks', stocks);*/
   }
 
   @SubscribeMessage('createStock')
