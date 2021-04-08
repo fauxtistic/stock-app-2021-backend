@@ -16,17 +16,17 @@ export class StockGateway {
   @WebSocketServer() server;
 
   @SubscribeMessage('requestStocks')
-  handleRequestStocksEvent(
+  async handleRequestStocksEvent(
     @MessageBody() date: Date,
     @ConnectedSocket() client: Socket,
-  ): void {
-    const stocks = this.stockService.getAllStocks(date);
+  ): Promise<void> {
+    const stocks = await this.stockService.getAllStocks(date);
     client.emit('allStocks', stocks);
   }
 
   @SubscribeMessage('updateStock')
-  handleUpdateStockEvent(@MessageBody() { stock, date }): void {
-    const updatedStock = this.stockService.updateStock(stock, date);
+  async handleUpdateStockEvent(@MessageBody() { stock, date }): Promise<void> {
+    const updatedStock = await this.stockService.updateStock(stock, date);
     this.server.emit('stockUpdated', updatedStock);
     /*const newDate = new Date();
     const stocks = this.stockService.getAllStocks(newDate);
@@ -34,8 +34,8 @@ export class StockGateway {
   }
 
   @SubscribeMessage('deleteStock')
-  handleDeleteStockEvent(@MessageBody() stock: Stock): void {
-    const deletedStock = this.stockService.deleteStock(stock);
+  async handleDeleteStockEvent(@MessageBody() stock: Stock): Promise<void> {
+    const deletedStock = await this.stockService.deleteStock(stock);
     this.server.emit('stockDeleted', deletedStock);
     /*const newDate = new Date();
     const stocks = this.stockService.getAllStocks(newDate);
@@ -43,8 +43,8 @@ export class StockGateway {
   }
 
   @SubscribeMessage('createStock')
-  handleCreateStockEvent(@MessageBody() stock: Stock): void {
-    const createdStock = this.stockService.createStock(stock);
+  async handleCreateStockEvent(@MessageBody() stock: Stock): Promise<void> {
+    const createdStock = await this.stockService.createStock(stock);
     this.server.emit('stockCreated', createdStock);
   }
 }

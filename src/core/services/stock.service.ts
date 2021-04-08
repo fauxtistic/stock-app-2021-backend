@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Stock } from '../models/stock.model';
+import { StockRepository } from '../../infrastructure/stock.repository';
 
 @Injectable()
 export class StockService {
-  stocks: Stock[] = [];
-  currentId = 0;
-
-  constructor() {
+  constructor(private stockRepo: StockRepository) {
     this.seedData();
   }
 
-  seedData(): void {
-    console.log('seeding data', 'seeding');
+  async seedData(): Promise<void> {
+    await this.stockRepo.deleteAllStocks();
     const stock1: Stock = {
       name: 'Novo Nordisk',
       description: 'Medicinal company',
@@ -42,36 +40,37 @@ export class StockService {
       currentValue: 1400,
       dateOfCurrentValue: new Date(),
     };
-    this.createStock(stock1);
-    this.createStock(stock2);
-    this.createStock(stock3);
-    this.createStock(stock4);
-    this.createStock(stock5);
+    await this.createStock(stock1);
+    await this.createStock(stock2);
+    await this.createStock(stock3);
+    await this.createStock(stock4);
+    await this.createStock(stock5);
   }
 
-  createStock(stock: Stock): Stock {
-    stock.id = ++this.currentId;
-    this.stocks.push(stock);
-    return stock;
+  async createStock(stock: Stock): Promise<Stock> {
+    const createdStock = this.stockRepo.addStock(stock);
+    return createdStock;
   }
 
-  getAllStocks(date: Date): Stock[] {
-    for (const stock of this.stocks) {
-      this.processStock(stock, date);
+  async getAllStocks(date: Date): Promise<Stock[]> {
+    const stocks = await this.stockRepo.getAllStocks();
+    const updatedStocks: Stock[] = [];
+    for (const stock of stocks) {
+      const updatedStock = await this.updateStock(stock, date);
+      updatedStocks.push(updatedStock);
     }
-    return this.stocks;
+    return updatedStocks;
   }
 
-  updateStock(stock: Stock, date: Date): Stock {
-    const index = this.stocks.findIndex((s) => s.id == stock.id);
+  async updateStock(stock: Stock, date: Date): Promise<Stock> {
     this.processStock(stock, date);
-    this.stocks[index] = stock;
-    return stock;
+    const updatedStock = await this.stockRepo.updateStock(stock);
+    return updatedStock;
   }
 
-  deleteStock(stock: Stock): Stock {
-    this.stocks = this.stocks.filter((s) => s.id != stock.id);
-    return stock;
+  async deleteStock(stock: Stock): Promise<Stock> {
+    const deletedStock = await this.stockRepo.deleteStock(stock);
+    return deletedStock;
   }
 
   private processStock(stock: Stock, date: Date): Stock {
